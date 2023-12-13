@@ -1,0 +1,57 @@
+tasks:
+  # Install dependencies
+  - name: Install dependencies
+    script: |
+      # Clone aptos-core repo
+      git clone https://github.com/aptos-labs/aptos-core.git
+      cd aptos-core
+
+      # Install build dependencies
+      ./scripts/dev_setup.sh
+
+  # Optionally, check out a release branch
+  - name: Check out devnet branch (optional)
+    script: |
+      git checkout devnet
+
+  # Install Move Prover tools
+  - name: Install Move Prover tools
+    script: |
+      ./scripts/dev_setup.sh -y -p
+
+  # Open ports for Aptos node
+  - name: Open Aptos node ports
+    ports:
+      - 8545:tcp
+      - 8546:tcp
+
+  # Launch Aptos node (optional)
+  - name: Start Aptos node (optional)
+    script: |
+      cargo run --bin aptos-node --network devnet
+
+# IDE configuration
+ide:
+  # Use VSCode for development
+  - name: Visual Studio Code
+    settings:
+      # Set up Rust extension for Aptos development
+      rust-analyzer.server.address: localhost:3000
+      rust-analyzer.experimental.cargo.enable: true
+
+# Environment variables
+env:
+  # Set up environment for Move Prover tools
+  - CARGO_HOME: ~/.cargo
+  - PATH: $CARGO_HOME/bin:$PATH
+
+# Docker image
+docker:
+  # Use latest Ubuntu image
+  image: ubuntu:latest
+
+# Additional notes
+- This configuration assumes you have Git installed.
+- You can customize the tasks and environment variables to suit your needs.
+- Refer to the Aptos documentation for further information on Move Prover and Aptos development.
+
